@@ -1,0 +1,807 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Request For Comment (RFC) Schema",
+  "description": "Comprehensive schema for RFC documents with technical design, architecture, API contracts, and implementation strategy",
+  "type": "object",
+  "required": [
+    "metadata",
+    "problem_analysis",
+    "proposed_solution",
+    "architecture"
+  ],
+  "oneOf": [
+    {
+      "required": ["prd_reference"],
+      "not": {"required": ["enhancement_context"]}
+    },
+    {
+      "required": ["enhancement_context"],
+      "not": {"required": ["prd_reference"]}
+    }
+  ],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "RFC document metadata and ownership",
+      "required": ["rfc_id", "title", "version", "status"],
+      "properties": {
+        "rfc_id": {
+          "type": "string",
+          "description": "Unique RFC identifier (e.g., RFC-001)",
+          "pattern": "^RFC-\\d+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "RFC title",
+          "minLength": 10,
+          "maxLength": 150
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version number",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "default": "1.0.0"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "in_review", "approved", "implemented", "archived"],
+          "description": "Current status of the RFC"
+        },
+        "author": {
+          "type": "string",
+          "description": "RFC author/creator"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Technical owner/maintainer"
+        },
+        "reviewers": {
+          "type": "array",
+          "description": "People who reviewed this RFC",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "RFC creation timestamp"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Last update timestamp"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Approval timestamp"
+        },
+        "labels": {
+          "type": "array",
+          "description": "Tags for categorization (backend, frontend, database, infrastructure, etc.)",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "prd_reference": {
+      "type": "object",
+      "description": "Link to related PRD document",
+      "required": ["prd_id"],
+      "properties": {
+        "prd_id": {
+          "type": "string",
+          "description": "Reference to parent PRD ID"
+        },
+        "prd_title": {
+          "type": "string",
+          "description": "Title of the PRD"
+        },
+        "prd_version": {
+          "type": "string",
+          "description": "Version of the PRD this RFC addresses"
+        },
+        "requirements_addressed": {
+          "type": "array",
+          "description": "List of PRD requirements (REQ-001, REQ-002, etc.) this RFC covers",
+          "items": {
+            "type": "string",
+            "pattern": "^REQ-\\d+$"
+          }
+        }
+      }
+    },
+    "enhancement_context": {
+      "type": "object",
+      "description": "Context for enhancement RFCs (feature improvements, refactoring, optimization, bugfixes) - used when not creating new feature from PRD",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["feature_enhancement", "refactoring", "optimization", "bugfix", "technical_debt"],
+          "description": "Type of enhancement"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Why this enhancement is needed",
+          "minLength": 30
+        },
+        "reference_rfc_id": {
+          "type": "string",
+          "description": "Previous RFC this enhances (e.g., RFC-001). Used for refactoring or improving existing technical design",
+          "pattern": "^RFC-\\d+$"
+        },
+        "reference_epic_id": {
+          "type": "string",
+          "description": "Epic this enhances (e.g., epic-001). Used for feature enhancements",
+          "pattern": "^epic-.*"
+        },
+        "reference_prd_requirement": {
+          "type": "string",
+          "description": "Original requirement being enhanced/fixed (e.g., REQ-001)",
+          "pattern": "^REQ-\\d+$"
+        },
+        "scope": {
+          "type": "string",
+          "description": "Scope of enhancement (partial, complete, comprehensive)"
+        },
+        "impact_analysis": {
+          "type": "string",
+          "description": "What existing functionality is impacted or changed"
+        },
+        "backward_compatibility": {
+          "type": "string",
+          "description": "Whether this change is backward compatible"
+        },
+        "migration_path": {
+          "type": "string",
+          "description": "Path for users/systems to migrate if breaking changes introduced"
+        }
+      },
+      "required": ["type", "reason"]
+    },
+    "problem_analysis": {
+      "type": "object",
+      "description": "Analysis of the problem - from PRD context for new features or from enhancement_context for improvements",
+      "properties": {
+        "summary": {
+          "type": "string",
+          "description": "Brief summary of the problem"
+        },
+        "constraints": {
+          "type": "array",
+          "description": "Constraints from PRD that impact the technical solution",
+          "items": {
+            "type": "string"
+          }
+        },
+        "technical_challenges": {
+          "type": "array",
+          "description": "Technical challenges specific to this solution",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "proposed_solution": {
+      "type": "object",
+      "description": "High-level description of the proposed solution",
+      "properties": {
+        "overview": {
+          "type": "string",
+          "description": "Brief overview of the approach",
+          "minLength": 50
+        },
+        "philosophy": {
+          "type": "string",
+          "description": "Design principles and philosophy guiding this solution"
+        },
+        "key_benefits": {
+          "type": "array",
+          "description": "Main benefits of this solution",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "description": "System architecture and design",
+      "properties": {
+        "diagram_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Link to architecture diagram"
+        },
+        "components": {
+          "type": "array",
+          "description": "Major system components",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Component name"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["service", "library", "database", "cache", "queue", "gateway", "other"],
+                "description": "Component type"
+              },
+              "purpose": {
+                "type": "string",
+                "description": "What this component does"
+              },
+              "responsibility": {
+                "type": "string",
+                "description": "Primary responsibility"
+              },
+              "technology": {
+                "type": "string",
+                "description": "Technology/platform used"
+              }
+            }
+          }
+        },
+        "integrations": {
+          "type": "array",
+          "description": "Integration points with other systems",
+          "items": {
+            "type": "object",
+            "properties": {
+              "system": {
+                "type": "string",
+                "description": "Name of the integrated system"
+              },
+              "integration_point": {
+                "type": "string",
+                "description": "How it integrates (API, event, database, etc.)"
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low"],
+                "description": "Impact if this integration fails"
+              }
+            }
+          }
+        }
+      }
+    },
+    "data_models": {
+      "type": "object",
+      "description": "Data models and database schema",
+      "properties": {
+        "entities": {
+          "type": "array",
+          "description": "Core data entities",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Entity name"
+              },
+              "description": {
+                "type": "string",
+                "description": "Entity purpose"
+              },
+              "schema": {
+                "type": "object",
+                "description": "Entity JSON schema definition",
+                "additionalProperties": true
+              },
+              "relationships": {
+                "type": "array",
+                "description": "Relationships to other entities",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target_entity": {
+                      "type": "string",
+                      "description": "Related entity name"
+                    },
+                    "cardinality": {
+                      "type": "string",
+                      "enum": ["1:1", "1:N", "N:1", "N:N"],
+                      "description": "Relationship cardinality"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "Relationship description"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "data_flow": {
+          "type": "string",
+          "description": "Description of how data flows through the system"
+        },
+        "migration_strategy": {
+          "type": "string",
+          "description": "Strategy for migrating existing data if applicable"
+        }
+      }
+    },
+    "api_contracts": {
+      "type": "array",
+      "description": "References to API contracts defined in @templates/schemas/api-contract.schema.json. Store full contract details in api_contracts collection, reference here by endpoint and method.",
+      "items": {
+        "type": "object",
+        "required": ["endpoint", "method"],
+        "properties": {
+          "endpoint": {
+            "type": "string",
+            "description": "API endpoint path (e.g., '/api/v1/users')"
+          },
+          "method": {
+            "type": "string",
+            "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"],
+            "description": "HTTP method"
+          },
+          "api_contract_id": {
+            "type": "string",
+            "description": "Reference ID to api_contracts collection. Full contract details stored there following api-contract.schema.json"
+          },
+          "prd_requirement": {
+            "type": "string",
+            "description": "Related PRD requirement ID",
+            "pattern": "^REQ-\\d+$"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Purpose of this endpoint in the RFC context"
+          }
+        }
+      }
+    },
+    "authentication_security": {
+      "type": "object",
+      "description": "Authentication and security design",
+      "properties": {
+        "authentication_scheme": {
+          "type": "string",
+          "enum": ["Bearer", "Basic", "ApiKey", "OAuth2", "OpenID", "None"],
+          "description": "Authentication scheme used"
+        },
+        "token_format": {
+          "type": "string",
+          "description": "Token format (e.g., JWT, Opaque)"
+        },
+        "authorization_model": {
+          "type": "string",
+          "enum": ["RBAC", "ABAC", "Resource-Based", "Other"],
+          "description": "Authorization model"
+        },
+        "roles": {
+          "type": "array",
+          "description": "Defined roles and their permissions",
+          "items": {
+            "type": "object",
+            "properties": {
+              "role": {
+                "type": "string",
+                "description": "Role name"
+              },
+              "permissions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "security_considerations": {
+          "type": "array",
+          "description": "Security measures and considerations",
+          "items": {
+            "type": "string"
+          }
+        },
+        "compliance_requirements": {
+          "type": "array",
+          "description": "Compliance standards (GDPR, HIPAA, SOC2, etc.)",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "performance_scalability": {
+      "type": "object",
+      "description": "Performance and scalability design",
+      "properties": {
+        "performance_targets": {
+          "type": "array",
+          "description": "Performance metrics and targets",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string",
+                "description": "Metric name"
+              },
+              "target": {
+                "type": "string",
+                "description": "Target value"
+              },
+              "justification": {
+                "type": "string",
+                "description": "Why this target is important"
+              }
+            }
+          }
+        },
+        "scalability_strategy": {
+          "type": "object",
+          "properties": {
+            "horizontal_scaling": {
+              "type": "string",
+              "description": "Strategy for scaling horizontally"
+            },
+            "vertical_scaling": {
+              "type": "string",
+              "description": "Strategy for scaling vertically"
+            },
+            "caching_strategy": {
+              "type": "string",
+              "description": "Caching approach (Redis, Memcached, etc.)"
+            },
+            "database_optimization": {
+              "type": "string",
+              "description": "Database optimization strategy (indexing, sharding, etc.)"
+            }
+          }
+        },
+        "load_distribution": {
+          "type": "string",
+          "description": "How requests are distributed across infrastructure"
+        }
+      }
+    },
+    "trade_offs": {
+      "type": "object",
+      "description": "Analysis of trade-offs and alternatives",
+      "properties": {
+        "chosen_approach": {
+          "type": "string",
+          "description": "Why this approach was chosen"
+        },
+        "alternatives": {
+          "type": "array",
+          "description": "Considered alternatives and their trade-offs",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Alternative approach name"
+              },
+              "pros": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "cons": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "why_not_chosen": {
+                "type": "string",
+                "description": "Reasoning for not choosing this alternative"
+              }
+            }
+          }
+        }
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "description": "Implementation strategy and phases",
+      "properties": {
+        "phases": {
+          "type": "array",
+          "description": "Implementation phases",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Phase name (e.g., Foundation, Core Features)"
+              },
+              "duration": {
+                "type": "string",
+                "description": "Estimated duration (e.g., 2 weeks)"
+              },
+              "deliverables": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "dependencies": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "technology_stack": {
+          "type": "array",
+          "description": "Technologies used in each layer",
+          "items": {
+            "type": "object",
+            "properties": {
+              "layer": {
+                "type": "string",
+                "description": "Layer name (Frontend, Backend, Database, etc.)"
+              },
+              "technology": {
+                "type": "string",
+                "description": "Technology choice"
+              },
+              "rationale": {
+                "type": "string",
+                "description": "Why this technology was chosen"
+              }
+            }
+          }
+        },
+        "development_guidelines": {
+          "type": "array",
+          "description": "Guidelines for development",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "dependencies_risks": {
+      "type": "object",
+      "description": "External dependencies and risk analysis",
+      "properties": {
+        "external_dependencies": {
+          "type": "array",
+          "description": "External dependencies",
+          "items": {
+            "type": "object",
+            "properties": {
+              "dependency": {
+                "type": "string",
+                "description": "Dependency name"
+              },
+              "type": {
+                "type": "string",
+                "description": "Type (system, team, third-party)"
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low"]
+              },
+              "mitigation": {
+                "type": "string",
+                "description": "Mitigation strategy"
+              }
+            }
+          }
+        },
+        "technical_risks": {
+          "type": "array",
+          "description": "Technical risks and mitigation",
+          "items": {
+            "type": "object",
+            "properties": {
+              "risk": {
+                "type": "string",
+                "description": "Risk description"
+              },
+              "probability": {
+                "type": "string",
+                "enum": ["high", "medium", "low"]
+              },
+              "impact": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low"]
+              },
+              "mitigation": {
+                "type": "string",
+                "description": "Mitigation strategy"
+              }
+            }
+          }
+        }
+      }
+    },
+    "testing_quality": {
+      "type": "object",
+      "description": "Testing and quality assurance strategy",
+      "properties": {
+        "unit_tests": {
+          "type": "object",
+          "properties": {
+            "coverage_target": {
+              "type": "string",
+              "description": "Target code coverage percentage"
+            },
+            "framework": {
+              "type": "string",
+              "description": "Testing framework to use"
+            },
+            "key_areas": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "integration_tests": {
+          "type": "array",
+          "description": "Integration test scenarios"
+        },
+        "e2e_tests": {
+          "type": "array",
+          "description": "End-to-end test scenarios"
+        },
+        "performance_tests": {
+          "type": "array",
+          "description": "Performance testing requirements"
+        }
+      }
+    },
+    "monitoring_observability": {
+      "type": "object",
+      "description": "Monitoring, logging, and observability",
+      "properties": {
+        "metrics": {
+          "type": "array",
+          "description": "Metrics to be monitored",
+          "items": {
+            "type": "object",
+            "properties": {
+              "metric": {
+                "type": "string",
+                "description": "Metric name"
+              },
+              "type": {
+                "type": "string",
+                "enum": ["business", "technical", "user"],
+                "description": "Metric category"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "logging_strategy": {
+          "type": "string",
+          "description": "Logging approach and aggregation tool"
+        },
+        "alerting": {
+          "type": "array",
+          "description": "Alerting thresholds and escalation",
+          "items": {
+            "type": "object",
+            "properties": {
+              "alert": {
+                "type": "string",
+                "description": "Alert condition"
+              },
+              "severity": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low"]
+              },
+              "escalation": {
+                "type": "string",
+                "description": "Who to alert"
+              }
+            }
+          }
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "description": "Deployment and release strategy",
+      "properties": {
+        "strategy": {
+          "type": "string",
+          "enum": ["blue-green", "canary", "rolling", "big-bang"],
+          "description": "Deployment strategy"
+        },
+        "environments": {
+          "type": "array",
+          "description": "Target environments (dev, staging, prod)"
+        },
+        "rollback_plan": {
+          "type": "string",
+          "description": "Plan for rolling back if issues occur"
+        },
+        "release_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Planned release date"
+        },
+        "monitoring_period": {
+          "type": "string",
+          "description": "Post-release monitoring period"
+        }
+      }
+    },
+    "success_criteria": {
+      "type": "array",
+      "description": "Criteria for considering the RFC implementation successful",
+      "items": {
+        "type": "string"
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Open questions and decisions pending",
+      "items": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The open question"
+          },
+          "owner": {
+            "type": "string",
+            "description": "Person responsible for answering"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "in_progress", "resolved", "deferred"]
+          },
+          "answer": {
+            "type": "string",
+            "description": "Answer once resolved"
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "Related documents and references",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["prd", "design", "technical_doc", "spike", "research", "external", "other"],
+            "description": "Reference type"
+          },
+          "title": {
+            "type": "string",
+            "description": "Reference title"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to reference"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description"
+          }
+        }
+      }
+    }
+  }
+}

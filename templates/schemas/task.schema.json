@@ -1,0 +1,402 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Task Breakdown Schema",
+  "description": "Lightweight task schema that separates business requirements from implementation details",
+  "type": "object",
+  "required": ["tasks"],
+  "properties": {
+    "tasks": {
+      "type": "array",
+      "description": "Business-focused tasks without implementation details",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "description", "type", "acceptance_criteria"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique task identifier",
+            "pattern": "^[A-Z]+-[0-9]+$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Task title",
+            "minLength": 10,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "WHAT needs to be built and WHY (business logic), NOT HOW to build it",
+            "minLength": 50
+          },
+          "type": {
+            "type": "string",
+            "enum": ["backend", "frontend", "qa", "infra", "docs"],
+            "description": "Type of task"
+          },
+          "category": {
+            "type": "string",
+            "description": "Task category based on type. Backend: api, worker, consumer. Frontend: slicing, integration. QA: unit, integration, e2e, performance. Infra: deployment, monitoring, security, scaling. Docs: api-docs, user-guide, technical-guide, changelog.",
+            "enum": [
+              "api",
+              "worker",
+              "consumer",
+              "slicing",
+              "integration",
+              "unit",
+              "e2e",
+              "performance",
+              "deployment",
+              "monitoring",
+              "security",
+              "scaling",
+              "api-docs",
+              "user-guide",
+              "technical-guide",
+              "changelog"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Business priority level"
+          },
+          "estimated_effort": {
+            "type": "number",
+            "description": "Estimated effort in story points or hours",
+            "minimum": 0
+          },
+          "dependencies": {
+            "type": "array",
+            "description": "IDs of tasks this task depends on",
+            "items": {
+              "type": "string",
+              "pattern": "^[A-Z]+-[0-9]+$"
+            }
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "description": "Business acceptance criteria - WHAT should work, not HOW to implement",
+            "items": {
+              "type": "object",
+              "required": ["criterion", "verification_method"],
+              "properties": {
+                "criterion": {
+                  "type": "string",
+                  "description": "Functional requirement from user/business perspective",
+                  "minLength": 20
+                },
+                "verification_method": {
+                  "type": "string",
+                  "description": "How to verify (test type, not specific test file)"
+                }
+              }
+            },
+            "minItems": 1
+          },
+          "business_context": {
+            "type": "object",
+            "description": "Why this task matters - the business rationale",
+            "properties": {
+              "user_story": {
+                "type": "string",
+                "description": "User story in format: As a [role], I want [feature], so that [benefit]"
+              },
+              "business_value": {
+                "type": "string",
+                "description": "The business value this task delivers"
+              },
+              "success_metrics": {
+                "type": "array",
+                "description": "How to measure success of this task",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "functional_requirements": {
+            "type": "object",
+            "description": "WHAT the system should do (technology-agnostic)",
+            "properties": {
+              "inputs": {
+                "type": "array",
+                "description": "What inputs the system receives",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "description"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Input parameter name"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "What this input represents"
+                    },
+                    "validation_rules": {
+                      "type": "array",
+                      "description": "Business rules for validating this input",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "outputs": {
+                "type": "array",
+                "description": "What outputs the system produces",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "description"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Output name"
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "What this output represents"
+                    },
+                    "data_structure": {
+                      "type": "string",
+                      "description": "General shape of data, not specific schema"
+                    }
+                  }
+                }
+              },
+              "behavior": {
+                "type": "array",
+                "description": "How the system should behave under different conditions",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "edge_cases": {
+                "type": "array",
+                "description": "Special cases and error conditions to handle",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "api_contract_id": {
+            "type": "string",
+            "description": "For backend tasks: API contract that frontend can depend on and reference on api_contracts collection",
+            "minLength": 1
+          },
+          "ui_requirements": {
+            "type": "object",
+            "description": "For frontend tasks: UI behavior requirements",
+            "properties": {
+              "user_interactions": {
+                "type": "array",
+                "description": "What users can do (e.g., 'Click to submit form', 'Drag to reorder')",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "states": {
+                "type": "array",
+                "description": "Different UI states (loading, error, empty, success)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "accessibility": {
+                "type": "array",
+                "description": "Accessibility requirements (WCAG, keyboard navigation, etc.)",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "responsive_behavior": {
+                "type": "string",
+                "description": "How UI adapts to different screen sizes"
+              }
+            }
+          },
+          "data_requirements": {
+            "type": "object",
+            "description": "What data is needed (not where it's stored)",
+            "properties": {
+              "entities": {
+                "type": "array",
+                "description": "Business entities involved",
+                "items": {
+                  "type": "object",
+                  "required": ["name"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Entity name"
+                    },
+                    "attributes": {
+                      "type": "array",
+                      "description": "Entity attributes/properties",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "relationships": {
+                      "type": "array",
+                      "description": "Relationships to other entities",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              "data_retention": {
+                "type": "string",
+                "description": "How long data should be kept (e.g., '30 days', 'indefinite')"
+              },
+              "data_sensitivity": {
+                "type": "string",
+                "enum": ["public", "internal", "confidential", "restricted"],
+                "description": "Data classification for security"
+              }
+            }
+          },
+          "quality_attributes": {
+            "type": "object",
+            "description": "Non-functional requirements",
+            "properties": {
+              "performance": {
+                "type": "object",
+                "description": "Performance requirements",
+                "properties": {
+                  "response_time": {
+                    "type": "string",
+                    "description": "Expected response time (e.g., '< 500ms')"
+                  },
+                  "throughput": {
+                    "type": "string",
+                    "description": "Expected requests per second or data throughput"
+                  }
+                }
+              },
+              "security": {
+                "type": "array",
+                "description": "Security requirements",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "reliability": {
+                "type": "object",
+                "description": "Reliability and availability requirements",
+                "properties": {
+                  "availability": {
+                    "type": "string",
+                    "description": "Expected uptime (e.g., '99.9%')"
+                  },
+                  "error_handling": {
+                    "type": "array",
+                    "description": "How errors should be handled",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "testing_expectations": {
+            "type": "object",
+            "description": "What needs to be tested (not specific test files)",
+            "properties": {
+              "test_scenarios": {
+                "type": "array",
+                "description": "Scenarios that must be tested",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "coverage_expectations": {
+                "type": "string",
+                "description": "Expected test coverage level (e.g., '80% code coverage')"
+              }
+            }
+          },
+          "design_references": {
+            "type": "array",
+            "description": "Links to designs, mockups, prototypes",
+            "items": {
+              "type": "object",
+              "required": ["url"],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Link to design document"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of what this reference covers"
+                }
+              }
+            }
+          },
+          "related_prd_sections": {
+            "type": "array",
+            "description": "Section numbers from parent PRD (e.g., '6.1', '6.2')",
+            "items": {
+              "type": "string",
+              "pattern": "^\\d+(\\.\\d+)*$"
+            }
+          },
+          "epic_id": {
+            "type": "string",
+            "description": "Reference to parent epic",
+            "minLength": 1
+          },
+          "labels": {
+            "type": "array",
+            "description": "Tags for categorization and filtering",
+            "items": {
+              "type": "string"
+            }
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional business context or considerations"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["planning", "ready", "in_progress", "blocked", "completed", "cancelled"],
+            "description": "Current status of the task"
+          },
+          "timestamps": {
+            "type": "object",
+            "description": "Task lifecycle timestamps",
+            "properties": {
+              "created_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when task was created"
+              },
+              "updated_at": {
+                "type": "string",
+                "format": "date-time",
+                "description": "ISO 8601 timestamp of last update"
+              },
+              "started_at": {
+                "type": ["string", "null"],
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when task was started"
+              },
+              "completed_at": {
+                "type": ["string", "null"],
+                "format": "date-time",
+                "description": "ISO 8601 timestamp when task was completed"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

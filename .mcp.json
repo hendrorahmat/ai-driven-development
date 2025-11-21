@@ -1,0 +1,29 @@
+{
+  "mcpServers": {
+    "sequential-thinking": {
+      "type": "stdio",
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "mcp/sequentialthinking"
+      ]
+    },
+    "MongoDB": {
+      "command": "docker",
+      "args": [
+        "run",
+        "--rm",
+        "-i",
+        "--network=host",
+        "-e",
+        "MDB_MCP_CONNECTION_STRING=mongodb://root:example@localhost:27017/ai_development?authSource=admin",
+        "-e",
+        "MDB_MCP_READ_ONLY=false",
+        "-i",
+        "mongodb/mongodb-mcp-server:latest"
+      ]
+    }
+  }
+}

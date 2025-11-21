@@ -1,0 +1,591 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Product Requirements Document (PRD) Schema",
+  "description": "Comprehensive schema for Product Requirements Documents with business value, goals, scope, requirements, and release planning",
+  "type": "object",
+  "required": ["metadata", "business_value", "goals", "scope"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "description": "Document metadata and ownership information",
+      "required": ["name", "version", "description", "status"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "PRD title/name extracted from header",
+          "minLength": 5,
+          "maxLength": 150
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version number",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$",
+          "default": "1.0.0"
+        },
+        "description": {
+          "type": "string",
+          "description": "Executive summary of the PRD",
+          "minLength": 50,
+          "maxLength": 1000
+        },
+        "status": {
+          "type": "string",
+          "enum": ["draft", "in_review", "approved", "active", "archived"],
+          "description": "Current approval status of the PRD"
+        },
+        "owner": {
+          "type": "string",
+          "description": "Person or team responsible for PRD ownership"
+        },
+        "stakeholders": {
+          "type": "array",
+          "description": "All stakeholders mentioned or involved",
+          "items": {
+            "type": "string"
+          }
+        },
+        "labels": {
+          "type": "array",
+          "description": "Tags/labels inferred from content (mvp, critical, experimental, etc)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the source document or internal wiki page"
+        }
+      }
+    },
+    "business_value": {
+      "type": "object",
+      "description": "Business context and user value proposition",
+      "properties": {
+        "problem_statement": {
+          "type": "string",
+          "description": "What problem does this solve? (What, not how)",
+          "minLength": 50
+        },
+        "opportunity": {
+          "type": "string",
+          "description": "Market or business opportunity being addressed",
+          "minLength": 50
+        },
+        "target_users": {
+          "type": "array",
+          "description": "User personas and their needs/pain points",
+          "items": {
+            "type": "object",
+            "properties": {
+              "persona": {
+                "type": "string",
+                "description": "User persona name or description"
+              },
+              "needs": {
+                "type": "array",
+                "description": "What this user needs to accomplish",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "pain_points": {
+                "type": "array",
+                "description": "Current frustrations or challenges",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "goals": {
+      "type": "object",
+      "description": "Business and user goals with success metrics",
+      "required": ["business_goals", "user_goals"],
+      "properties": {
+        "business_goals": {
+          "type": "array",
+          "description": "What the business wants to achieve",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "user_goals": {
+          "type": "array",
+          "description": "What users should be able to accomplish",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "success_metrics": {
+          "type": "array",
+          "description": "Measurable indicators of success",
+          "items": {
+            "type": "object",
+            "required": ["metric", "target"],
+            "properties": {
+              "metric": {
+                "type": "string",
+                "description": "Name of the metric being measured"
+              },
+              "target": {
+                "type": "string",
+                "description": "Target value or improvement (e.g., '50% increase', '< 100ms')"
+              },
+              "measurement_method": {
+                "type": "string",
+                "description": "How the metric will be measured"
+              }
+            }
+          }
+        }
+      }
+    },
+    "scope": {
+      "type": "object",
+      "description": "Project boundaries, assumptions, and dependencies",
+      "properties": {
+        "in_scope": {
+          "type": "array",
+          "description": "What is included in this release",
+          "items": {
+            "type": "string"
+          }
+        },
+        "out_of_scope": {
+          "type": "array",
+          "description": "What is explicitly excluded from this release",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assumptions": {
+          "type": "array",
+          "description": "Assumptions made about the project, users, or environment",
+          "items": {
+            "type": "string"
+          }
+        },
+        "constraints": {
+          "type": "array",
+          "description": "Technical, resource, or business constraints",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "External systems, teams, or deliverables this depends on",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "description": "Document structure organized by sections and subsections",
+      "items": {
+        "type": "object",
+        "required": ["number", "title", "level"],
+        "properties": {
+          "number": {
+            "type": "string",
+            "description": "Section numbering (e.g., '6.1', '6.2.1')",
+            "pattern": "^\\d+(\\.\\d+)*$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Section title"
+          },
+          "description": {
+            "type": "string",
+            "description": "Content and description of this section"
+          },
+          "level": {
+            "type": "integer",
+            "description": "Hierarchy level (1=main, 2=subsection, 3=sub-subsection)",
+            "minimum": 1,
+            "maximum": 5
+          },
+          "requirements": {
+            "type": "array",
+            "description": "Requirements introduced in this section",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "functional_requirements": {
+      "type": "array",
+      "description": "Detailed functional requirements organized by ID",
+      "items": {
+        "type": "object",
+        "required": ["id", "title", "description", "priority"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique requirement ID",
+            "pattern": "^REQ-\\d+$"
+          },
+          "title": {
+            "type": "string",
+            "description": "Requirement title",
+            "minLength": 10,
+            "maxLength": 100
+          },
+          "description": {
+            "type": "string",
+            "description": "WHAT the system should do (technology-agnostic)",
+            "minLength": 30
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["must_have", "should_have", "nice_to_have"],
+            "description": "Business priority of this requirement"
+          },
+          "acceptance_criteria": {
+            "type": "array",
+            "description": "How to verify this requirement is met",
+            "items": {
+              "type": "string"
+            }
+          },
+          "related_section": {
+            "type": "string",
+            "description": "Section number where this requirement is discussed"
+          },
+          "dependencies": {
+            "type": "array",
+            "description": "Other requirements this depends on",
+            "items": {
+              "type": "string",
+              "pattern": "^REQ-\\d+$"
+            }
+          }
+        }
+      }
+    },
+    "non_functional_requirements": {
+      "type": "object",
+      "description": "Non-functional requirements (performance, security, etc)",
+      "properties": {
+        "performance": {
+          "type": "object",
+          "description": "Performance requirements",
+          "properties": {
+            "response_time": {
+              "type": "string",
+              "description": "Expected response time (e.g., '< 500ms')"
+            },
+            "throughput": {
+              "type": "string",
+              "description": "Expected requests per second or data throughput"
+            },
+            "scalability": {
+              "type": "string",
+              "description": "Expected scale (users, data volume, requests)"
+            }
+          }
+        },
+        "security": {
+          "type": "array",
+          "description": "Security requirements",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reliability": {
+          "type": "object",
+          "description": "Reliability and availability requirements",
+          "properties": {
+            "availability": {
+              "type": "string",
+              "description": "Expected uptime (e.g., '99.9%')"
+            },
+            "error_handling": {
+              "type": "array",
+              "description": "How errors and failures should be handled",
+              "items": {
+                "type": "string"
+              }
+            },
+            "data_backup": {
+              "type": "string",
+              "description": "Backup and recovery strategy"
+            }
+          }
+        },
+        "usability": {
+          "type": "object",
+          "description": "Usability and accessibility requirements",
+          "properties": {
+            "accessibility": {
+              "type": "string",
+              "description": "Accessibility standards (WCAG 2.1 AA, etc)"
+            },
+            "browser_support": {
+              "type": "array",
+              "description": "Supported browsers and versions",
+              "items": {
+                "type": "string"
+              }
+            },
+            "mobile_support": {
+              "type": "boolean",
+              "description": "Whether mobile support is required"
+            },
+            "languages": {
+              "type": "array",
+              "description": "Supported languages for internationalization",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "release_plan": {
+      "type": "object",
+      "description": "Phased release schedule and milestones",
+      "properties": {
+        "phases": {
+          "type": "array",
+          "description": "Release phases with features and milestones",
+          "items": {
+            "type": "object",
+            "required": ["name", "target_date"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Phase name (e.g., 'MVP', 'Phase 1', 'Beta')"
+              },
+              "description": {
+                "type": "string",
+                "description": "What this phase delivers"
+              },
+              "target_date": {
+                "type": "string",
+                "format": "date",
+                "description": "Target completion date (YYYY-MM-DD)"
+              },
+              "features": {
+                "type": "array",
+                "description": "Features included in this phase",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "milestones": {
+                "type": "array",
+                "description": "Key milestones within this phase",
+                "items": {
+                  "type": "object",
+                  "required": ["name", "date"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "description": "Milestone name"
+                    },
+                    "date": {
+                      "type": "string",
+                      "format": "date",
+                      "description": "Target date (YYYY-MM-DD)"
+                    },
+                    "deliverables": {
+                      "type": "array",
+                      "description": "What's delivered at this milestone",
+                      "items": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "array",
+      "description": "Identified risks and mitigation strategies",
+      "items": {
+        "type": "object",
+        "required": ["risk", "impact", "probability"],
+        "properties": {
+          "risk": {
+            "type": "string",
+            "description": "Risk description",
+            "minLength": 20
+          },
+          "impact": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "Severity of impact if risk occurs"
+          },
+          "probability": {
+            "type": "string",
+            "enum": ["high", "medium", "low"],
+            "description": "Likelihood of risk occurring"
+          },
+          "mitigation": {
+            "type": "string",
+            "description": "Strategy to mitigate or address this risk"
+          },
+          "contingency": {
+            "type": "string",
+            "description": "Backup plan if risk cannot be mitigated"
+          }
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "description": "Unresolved questions requiring clarification",
+      "items": {
+        "type": "object",
+        "required": ["question", "priority"],
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "The open question to be resolved",
+            "minLength": 20
+          },
+          "owner": {
+            "type": "string",
+            "description": "Person responsible for answering"
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["critical", "high", "medium", "low"],
+            "description": "How urgent it is to resolve this question"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["open", "in_progress", "resolved", "deferred"],
+            "description": "Current resolution status"
+          },
+          "answer": {
+            "type": "string",
+            "description": "Resolution/answer once determined"
+          }
+        }
+      }
+    },
+    "references": {
+      "type": "array",
+      "description": "Links to related documents, designs, and research",
+      "items": {
+        "type": "object",
+        "required": ["type", "title"],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["research", "design", "technical_doc", "market_analysis", "competitor_analysis", "user_feedback", "other"],
+            "description": "Type of reference material"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the reference"
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link to the reference material"
+          },
+          "description": {
+            "type": "string",
+            "description": "Brief description of the reference"
+          }
+        }
+      }
+    },
+    "changelog": {
+      "type": "array",
+      "description": "Version history and change tracking",
+      "items": {
+        "type": "object",
+        "required": ["version", "date", "changes"],
+        "properties": {
+          "version": {
+            "type": "string",
+            "description": "Version number",
+            "pattern": "^\\d+\\.\\d+\\.\\d+$"
+          },
+          "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of this version (YYYY-MM-DD)"
+          },
+          "updated_by": {
+            "type": "string",
+            "description": "Person who made the update"
+          },
+          "changes": {
+            "type": "array",
+            "description": "Specific changes in this version",
+            "items": {
+              "type": "object",
+              "required": ["type", "section", "description"],
+              "properties": {
+                "type": {
+                  "type": "string",
+                  "enum": ["added", "modified", "removed", "clarified"],
+                  "description": "Type of change"
+                },
+                "section": {
+                  "type": "string",
+                  "description": "Which section(s) were affected (e.g., 'all', 'business_value', 'requirements')"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "Description of what changed"
+                },
+                "impact_level": {
+                  "type": "string",
+                  "enum": ["critical", "high", "medium", "low"],
+                  "description": "Impact of this change on the project"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "timestamps": {
+      "type": "object",
+      "description": "Document lifecycle timestamps",
+      "required": ["created_at", "updated_at"],
+      "properties": {
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when PRD was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp of last update"
+        },
+        "approved_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when PRD was approved"
+        },
+        "approved_by": {
+          "type": "string",
+          "description": "Person/role who approved the PRD"
+        }
+      }
+    }
+  }
+}
