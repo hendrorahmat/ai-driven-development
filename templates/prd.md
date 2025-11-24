@@ -1,12 +1,20 @@
 # Product Requirements Document (PRD)
 
-## Document Information
-- **Product Name:** [Product/Feature Name]
-- **Version:** [Version Number]
-- **Date:** [Date]
-- **Author:** [Your Name]
-- **Stakeholders:** [List key stakeholders]
-- **Status:** [Draft / In Review / Approved]
+> **Product Requirements Document - Defines WHAT we're building and WHY**
+
+## 📋 Metadata & Document Information
+
+| Field | Value |
+|-------|-------|
+| **Name** | [Product/Feature Name] |
+| **Version** | [Semantic Version: x.y.z] |
+| **Date Created** | [YYYY-MM-DD] |
+| **Last Updated** | [YYYY-MM-DD] |
+| **Status** | [Draft / In Review / Approved / Active / Archived] |
+| **Owner** | [Product Manager Name] |
+| **Stakeholders** | [List: Engineering Lead, Design Lead, PM, etc.] |
+| **Labels/Tags** | [mvp, critical, experimental, etc.] |
+| **Document URL** | [Link to wiki or internal docs] |
 
 ---
 
@@ -72,47 +80,80 @@
 
 ---
 
-## 5. Scope
+## 5. Scope & Constraints
 
-**In Scope**
+**In Scope (Version [x.y])**
 - [Feature/capability 1]
 - [Feature/capability 2]
 - [Feature/capability 3]
 
-**Out of Scope**
+**Out of Scope (Future Versions)**
 - [What will NOT be included]
 - [Future considerations]
+- [Timeline for out-of-scope features]
 
 **Assumptions**
 - [Assumption 1]
 - [Assumption 2]
+- [Environmental/user assumptions]
+
+**Constraints**
+- [Technical constraints]
+- [Resource constraints]
+- [Regulatory/business constraints]
 
 **Dependencies**
-- [Dependency 1]
-- [Dependency 2]
+- [Blocking dependency 1]
+- [Blocking dependency 2]
+- [Optional/nice-to-have dependencies]
 
 ---
 
 ## 6. Functional Requirements
 
+### Requirement Format
+Each requirement follows this structure for schema alignment:
+- **ID:** REQ-XXX (must match pattern `^REQ-\d+$`)
+- **Title:** Short, descriptive title (10-100 chars)
+- **Description:** What the system should do (technology-agnostic, 30+ chars)
+- **Priority:** must_have | should_have | nice_to_have
+- **Acceptance Criteria:** List of verifiable conditions
+- **Related Section:** Link to documentation section
+- **Dependencies:** Other requirements this depends on (REQ-YYY format)
+
 ### 6.1 [Feature/Module Name]
-**Description:** [What this feature does]
+**Description:** [What this feature does and its user value]
 
 **Requirements:**
-- **REQ-001:** [Specific requirement]
-    - Priority: [High/Medium/Low]
-    - User Story: [Related user story]
-- **REQ-002:** [Specific requirement]
-    - Priority: [High/Medium/Low]
-    - User Story: [Related user story]
+- **REQ-001:** [Requirement Title]
+    - **Description:** [What the system should do - technology agnostic]
+    - **Priority:** [must_have / should_have / nice_to_have]
+    - **Acceptance Criteria:**
+        - [ ] [Acceptance criterion 1]
+        - [ ] [Acceptance criterion 2]
+    - **Related Section:** 6.1
+    - **Dependencies:** None
+
+- **REQ-002:** [Requirement Title]
+    - **Description:** [What the system should do]
+    - **Priority:** [must_have / should_have / nice_to_have]
+    - **Acceptance Criteria:**
+        - [ ] [Acceptance criterion 1]
+        - [ ] [Acceptance criterion 2]
+    - **Related Section:** 6.1
+    - **Dependencies:** [REQ-001] (if applicable)
 
 ### 6.2 [Feature/Module Name]
-**Description:** [What this feature does]
+**Description:** [What this feature does and its user value]
 
 **Requirements:**
-- **REQ-003:** [Specific requirement]
-    - Priority: [High/Medium/Low]
-    - User Story: [Related user story]
+- **REQ-003:** [Requirement Title]
+    - **Description:** [What the system should do]
+    - **Priority:** [must_have / should_have / nice_to_have]
+    - **Acceptance Criteria:**
+        - [ ] [Acceptance criterion 1]
+    - **Related Section:** 6.2
+    - **Dependencies:** None
 
 ---
 
@@ -206,43 +247,82 @@
 
 ## 11. Risks & Mitigation
 
-| Risk | Impact | Probability | Mitigation Strategy |
-|------|--------|-------------|---------------------|
-| [Risk description] | [High/Med/Low] | [High/Med/Low] | [How to address] |
-| [Risk description] | [High/Med/Low] | [High/Med/Low] | [How to address] |
+**Format for Schema Alignment:**
+- Risk Description (20+ chars)
+- Impact: critical | high | medium | low
+- Probability: high | medium | low
+- Mitigation Strategy
+- Contingency Plan (backup if mitigation fails)
+
+| Risk | Impact | Probability | Mitigation Strategy | Contingency Plan |
+|------|--------|-------------|---------------------|------------------|
+| [Risk description] | [critical/high/med/low] | [high/med/low] | [How to address] | [Backup plan] |
+| [Risk description] | [critical/high/med/low] | [high/med/low] | [How to address] | [Backup plan] |
 
 ---
 
 ## 12. Open Questions
 
-- [ ] [Question 1]
-- [ ] [Question 2]
-- [ ] [Question 3]
+**Format for Schema Alignment:**
+- Question (20+ chars minimum)
+- Owner: [Responsible person]
+- Priority: critical | high | medium | low
+- Status: open | in_progress | resolved | deferred
+- Answer: [Resolution once determined]
+
+| Question | Owner | Priority | Status | Answer |
+|----------|-------|----------|--------|--------|
+| [Question 1] | [Name] | [critical/high/med/low] | [Status] | [Answer if resolved] |
+| [Question 2] | [Name] | [critical/high/med/low] | [Status] | [Answer if resolved] |
+| [Question 3] | [Name] | [critical/high/med/low] | [Status] | [Answer if resolved] |
 
 ---
 
-## 13. Appendix
+## 13. References
 
-**Research & Data**
-- [Links to user research]
-- [Market analysis]
-- [Competitive analysis]
+**Format for Schema Alignment:**
+- Type: research | design | technical_doc | market_analysis | competitor_analysis | user_feedback | other
+- Title: [Document title]
+- URL: [Link to document]
+- Description: [Why this reference is relevant]
 
-**References**
-- [Related documents]
-- [External resources]
-
-**Glossary**
-- **[Term]:** [Definition]
-- **[Term]:** [Definition]
+| Type | Title | URL | Description |
+|------|-------|-----|-------------|
+| research | [Title] | [URL] | [Relevance] |
+| design | [Title] | [URL] | [Relevance] |
+| technical_doc | [Title] | [URL] | [Relevance] |
+| market_analysis | [Title] | [URL] | [Relevance] |
 
 ---
 
-## Approval Sign-off
+## 14. Changelog
 
-| Role | Name | Date | Signature |
-|------|------|------|-----------|
-| Product Manager | | | |
-| Engineering Lead | | | |
-| Design Lead | | | |
-| Stakeholder | | | |
+**Format for Schema Alignment:**
+- Version: [Semantic version x.y.z]
+- Date: [YYYY-MM-DD]
+- Updated By: [Person name]
+- Changes: Array of change objects with type, section, description, impact_level
+
+| Version | Date | Updated By | Type | Section | Description | Impact |
+|---------|------|------------|------|---------|-------------|--------|
+| 1.0.0 | [YYYY-MM-DD] | [Name] | [added/modified/removed/clarified] | [Section name] | [What changed] | [critical/high/med/low] |
+
+---
+
+## 15. Timestamps & Approval
+
+**Document Lifecycle:**
+- **Created At:** [YYYY-MM-DDTHH:MM:SSZ] (ISO 8601)
+- **Updated At:** [YYYY-MM-DDTHH:MM:SSZ] (ISO 8601)
+- **Approved At:** [YYYY-MM-DDTHH:MM:SSZ] (ISO 8601)
+- **Approved By:** [Person/Role name]
+
+**Stakeholder Sign-off:**
+
+| Role | Name | Approval | Date | Comments |
+|------|------|----------|------|----------|
+| Product Owner | | [ ] Approved | [Date] | |
+| Engineering Lead | | [ ] Reviewed | [Date] | |
+| Design Lead | | [ ] Reviewed | [Date] | |
+| Business Stakeholder | | [ ] Approved | [Date] | |
+| Legal/Compliance | | [ ] Reviewed | [Date] | |

@@ -12,11 +12,10 @@ When I provide a PRD document, extract ALL fields from the unified schema:
 
 OUTPUT STRUCTURE (COMPLETE - NO MISSING FIELDS):
 
-## JSON SCHEMA ##
+## JSON SCHEMA
 read from this file @templates/schemas/prd.schema.json
-## END JSON SCHEMA ##
 
-## CRITICAL RULES: ##
+## CRITICAL RULES:
 1. Extract ALL fields - don't skip any from the schema
 2. If a field is not in the document, use reasonable defaults or empty arrays
 3. If information is ambiguous, make reasonable inferences
@@ -25,4 +24,6 @@ read from this file @templates/schemas/prd.schema.json
 6. success_metrics must have at least 1 metric
 7. in_scope must have at least 1 item
 8. save the output JSON to mongodb in a collection named `prd_analysis` with fields
-## END CRITICAL RULES: ##
+
+## OUTPUT
+Show the id of the saved document in mongodb after saving.
