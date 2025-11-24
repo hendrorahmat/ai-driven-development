@@ -12,6 +12,79 @@ This framework enables:
 
 ---
 
+## 🚀 Quick Start
+
+### Generate Your First PRD (Product Requirements Document)
+
+```bash
+/generate-prd "A mobile app for tracking personal finances with budget alerts"
+```
+
+This creates a comprehensive PRD with:
+- Executive summary and business goals
+- Problem statement and target users
+- 5+ functional requirements (REQ-001, REQ-002, etc.)
+- Success metrics and acceptance criteria
+- Risk analysis and release plan
+
+**Output:** `docs/[product-name]-prd.md` (ready to review)
+
+### Generate Technical Design (RFC)
+
+```bash
+/generate-rfc prd-finance-001 --with-prd
+# Or simply: /generate-rfc prd-finance-001 (auto-detected as PRD ID)
+```
+
+This creates a technical design document with:
+- Architecture diagrams (3 Mermaid diagrams)
+- Complete API specifications (RFC 7807 error format)
+- Data models and relationships
+- Implementation strategy (3 realistic phases)
+- Performance, security, and testing plans
+
+**Output:** `docs/[product-name]-rfc.md` (with architecture diagrams)
+
+### Complete Workflow in 5 Steps
+
+```bash
+# 1. Generate PRD from product idea
+/generate-prd "Your product description"
+
+# 2. Validate and store PRD in MongoDB
+/analyze-prd docs/[product]-prd.md
+
+# 3. Generate technical design (RFC)
+/generate-rfc prd-[slug]-001 --with-prd
+# Or simply: /generate-rfc prd-[slug]-001
+
+# 4. Validate and store RFC in MongoDB
+/analyze-rfc docs/[product]-rfc.md
+
+# 5. Generate epics from PRD+RFC
+/prd-rfc-to-epics prd-[slug]-001 RFC-001
+```
+
+**From here:** Generate tasks → AI code generation → Testing & deployment
+
+---
+
+## 📚 Custom Commands Reference
+
+| Command | Purpose | Usage |
+|---------|---------|-------|
+| **`/generate-prd`** | Create comprehensive PRDs | `/generate-prd "product idea"` |
+| **`/generate-rfc`** | Create technical designs | `/generate-rfc prd-001 --with-prd` or `/generate-rfc prd-001` |
+| **`/analyze-prd`** | Validate & store PRD | `/analyze-prd docs/prd.md` |
+| **`/analyze-rfc`** | Validate & store RFC | `/analyze-rfc docs/rfc.md` |
+| **`/prd-rfc-to-epics`** | Generate epics (feature) | `/prd-rfc-to-epics prd-001 RFC-001` |
+| **`/rfc-to-epics`** | Generate epics (enhancement) | `/rfc-to-epics RFC-001` |
+| **`/epic-to-tasks`** | Generate implementable tasks | `/epic-to-tasks epic-001` |
+
+**Full guide:** See `.claude/COMMANDS_GUIDE.md` for detailed examples and workflows
+
+---
+
 ## Architecture & Core Concepts
 
 ### The AI-Driven Development Lifecycle
@@ -761,33 +834,414 @@ Stores implementable work units with complete context
 
 ---
 
-## File Structure
+## Project Structure
 
 ```
 ai-driven-development/
-├── README.md                          # This file
-├── templates/
-│   ├── prd.md                         # PRD markdown template
-│   ├── rfc.md                         # RFC markdown template
-│   └── schemas/
-│       ├── prd.schema.json            # PRD JSON schema
-│       ├── rfc.schema.json            # RFC JSON schema
-│       ├── api-contract.schema.json   # API contract schema
-│       ├── epic.schema.json           # Epic schema
-│       └── task.schema.json           # Task schema
+├── README.md                              # This file (project documentation)
 ├── .claude/
-│   └── commands/
-│       ├── analyze-prd.md             # PRD analysis command
-│       ├── analyze-rfc.md             # RFC analysis command
-│       ├── prd-to-epics.md            # PRD to epics (legacy)
-│       ├── prd-rfc-to-epics.md        # PRD + RFC to epics
-│       └── epic-to-tasks.md           # Epic to tasks
-└── docs/
-    ├── project-name-prd.md            # Filled PRD for project
-    ├── project-name-rfc.md            # Filled RFC for project
-    └── tasks/
-        └── task-001.md                # Individual task documentation
+│   ├── COMMANDS_GUIDE.md                  # Detailed commands reference & examples
+│   ├── commands/
+│   │   ├── generate-prd.md                # 🆕 PRD generation command
+│   │   ├── generate-rfc.md                # 🆕 RFC generation command
+│   │   ├── analyze-prd.md                 # PRD validation & storage
+│   │   ├── analyze-rfc.md                 # RFC validation & storage
+│   │   ├── prd-rfc-to-epics.md            # Epic generation (PRD+RFC)
+│   │   ├── rfc-to-epics.md                # Epic generation (RFC only)
+│   │   └── epic-to-tasks.md               # Task generation
+│   └── MCP_*.md                           # MCP server configuration
+│
+├── templates/
+│   ├── prd.md                             # PRD markdown template
+│   ├── rfc.md                             # RFC markdown template (with Mermaid)
+│   └── schemas/
+│       ├── prd.schema.json                # PRD JSON schema validation
+│       ├── rfc.schema.json                # RFC JSON schema (with Mermaid support)
+│       ├── api-contract.schema.json       # API contract specification schema
+│       ├── epic.schema.json               # Epic grouping schema (dual-mode)
+│       └── task.schema.json               # Task definition schema
+│
+├── docs/
+│   ├── [project-name]-prd.md              # Generated PRD documents
+│   ├── [project-name]-rfc.md              # Generated RFC documents
+│   └── tasks/
+│       └── task-*.md                      # Individual task documentation
+│
+└── docker-compose.yml                     # MongoDB setup for document storage
 ```
+
+### Key Directories Explained
+
+**`.claude/commands/`** - Custom Claude commands for the workflow
+- `generate-*` commands: Generate new documents from scratch
+- `analyze-*` commands: Validate and store documents in MongoDB
+- Epic/Task generation: Convert higher-level documents to implementation units
+
+**`templates/`** - Document templates and validation schemas
+- Markdown templates: Structure for PRD and RFC documents
+- JSON schemas: Validation and MongoDB storage structure
+
+**`docs/`** - Generated documents for your projects
+- Store generated PRDs, RFCs, and tasks here
+- Each project gets its own set of documents
+- Organized by project name
+
+---
+
+## 📖 How to Use This Project
+
+### Step 1: Generate a PRD (Product Requirements Document)
+
+The PRD defines **WHAT** you're building and **WHY**.
+
+```bash
+/generate-prd "Your product description or idea"
+```
+
+**Example:**
+```bash
+/generate-prd "A collaborative task management app where teams can create projects, assign tasks, track progress, and communicate in real-time"
+```
+
+**What you get:**
+- Complete PRD markdown file saved to `docs/[product]-prd.md`
+- Executive summary
+- 5+ functional requirements (REQ-001, REQ-002, etc.)
+- Success metrics and KPIs
+- Target users and personas
+- Risk assessment
+- Ready to review and iterate
+
+**Next:** Review the generated PRD, make edits if needed, then proceed to validation.
+
+---
+
+### Step 2: Validate and Store PRD in MongoDB
+
+Once you're happy with the PRD, validate it and store in MongoDB:
+
+```bash
+/analyze-prd docs/[product]-prd.md
+```
+
+**What happens:**
+- PRD is validated against schema
+- Structured JSON extracted
+- Saved to MongoDB `prd_analysis` collection
+- Returns unique PRD ID (e.g., `prd-task-management-001`)
+
+**Note the PRD ID** - you'll need it for the next step!
+
+---
+
+### Step 3: Generate Technical Design (RFC)
+
+The RFC defines **HOW** you'll build it.
+
+#### For New Features (with PRD context):
+
+```bash
+/generate-rfc prd-task-management-001 new_feature
+```
+
+**What you get:**
+- Complete RFC with technical design
+- 3 Mermaid architecture diagrams:
+  - System overview (components and relationships)
+  - Integration points (external systems)
+  - Data flow (request processing pipeline)
+- All API endpoints fully specified
+- Data models and relationships
+- Implementation strategy (3 phases)
+- Performance and security plans
+- Testing strategy
+- Risk assessment
+
+#### For Enhancements (without PRD):
+
+```bash
+/generate-rfc "Optimize database queries with strategic indexing to reduce query time from 500ms to 50ms" enhancement
+```
+
+**What you get:**
+- Enhancement context (type, reason, scope)
+- Technical design for the improvement
+- Implementation approach
+- Risk and mitigation strategy
+
+**Output:** RFC markdown file saved to `docs/[product]-rfc.md` with Mermaid diagrams
+
+---
+
+### Step 4: Validate and Store RFC in MongoDB
+
+Validate the RFC and extract API contracts:
+
+```bash
+/analyze-rfc docs/[product]-rfc.md
+```
+
+**What happens:**
+- RFC validated against schema
+- Structured JSON extracted
+- API contracts saved to `api_contracts` collection
+- RFC saved to `rfc_analysis` collection
+- Returns RFC ID (e.g., `RFC-001`)
+
+**Tip:** RFC 7807 error format with validationErrors is validated automatically
+
+---
+
+### Step 5: Generate Epics (Group Related Work)
+
+Epics organize work into feature groups that can be implemented together.
+
+#### For New Features (PRD + RFC):
+
+```bash
+/prd-rfc-to-epics prd-task-management-001 RFC-001
+```
+
+#### For Enhancements (RFC only):
+
+```bash
+/rfc-to-epics RFC-002
+```
+
+**What you get:**
+- Epics that group related features
+- Each epic links PRD requirements to RFC architecture
+- Epic IDs for task generation
+- Task routing keywords (backend, frontend, qa, docs, infra)
+
+---
+
+### Step 6: Generate Tasks (Implementable Work)
+
+Tasks are self-contained work items ready for implementation.
+
+```bash
+/epic-to-tasks epic-task-management-001
+```
+
+**What you get:**
+- Backend tasks (APIs, services, database)
+- Frontend tasks (UI, forms, pages)
+- QA tasks (unit tests, integration tests, e2e)
+- Documentation tasks
+- Infrastructure tasks
+
+**Each task includes:**
+- Full PRD context (requirements, acceptance criteria)
+- RFC context (architecture, implementation phase)
+- API specifications (if applicable)
+- Complete description for AI code generation
+- Acceptance criteria for validation
+
+---
+
+### Step 7: AI Code Generation
+
+With tasks fully contextualized, AI can now generate implementation:
+
+```bash
+# AI reads task with full PRD + RFC context
+# Generates:
+# - API endpoints matching specifications
+# - Error handling with RFC 7807 format
+# - Database models from RFC
+# - Unit tests based on acceptance criteria
+# - API documentation
+```
+
+---
+
+## 🎯 Complete Workflow Summary
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. /generate-prd "Your product idea"                        │
+│    ↓ (generates docs/[product]-prd.md)                     │
+│    Review & edit the PRD                                    │
+│    ↓                                                        │
+├─────────────────────────────────────────────────────────────┤
+│ 2. /analyze-prd docs/[product]-prd.md                       │
+│    ↓ (stores in MongoDB, returns prd-id)                   │
+├─────────────────────────────────────────────────────────────┤
+│ 3. /generate-rfc prd-id new_feature                         │
+│    ↓ (generates docs/[product]-rfc.md with Mermaid)        │
+│    Review & edit the RFC                                    │
+│    ↓                                                        │
+├─────────────────────────────────────────────────────────────┤
+│ 4. /analyze-rfc docs/[product]-rfc.md                       │
+│    ↓ (stores in MongoDB, returns RFC-id)                   │
+├─────────────────────────────────────────────────────────────┤
+│ 5. /prd-rfc-to-epics prd-id RFC-id                          │
+│    ↓ (creates grouped work units)                          │
+├─────────────────────────────────────────────────────────────┤
+│ 6. /epic-to-tasks epic-id                                   │
+│    ↓ (creates implementable tasks)                         │
+├─────────────────────────────────────────────────────────────┤
+│ 7. AI Code Generation                                       │
+│    ↓ (generates working code with full context)            │
+├─────────────────────────────────────────────────────────────┤
+│ 8. Testing & Deployment                                     │
+│    ✅ Complete, tested, documented application             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 💾 Understanding MongoDB Collections
+
+This project uses MongoDB to store all project knowledge:
+
+### `prd_analysis`
+Stores Product Requirements Documents
+```json
+{
+  "prd_id": "prd-task-management-001",
+  "title": "Task Management System",
+  "version": "1.0.0",
+  "functional_requirements": [
+    {
+      "id": "REQ-001",
+      "title": "User can create tasks",
+      "description": "Users must be able to create new tasks with title, description, and due date",
+      "priority": "must_have",
+      "acceptance_criteria": ["Task appears in user's task list", "Due date is validated"]
+    }
+  ],
+  "success_metrics": ["100+ active users", "<2s task creation time"],
+  "status": "Draft"
+}
+```
+
+### `rfc_analysis`
+Stores Request For Comment (technical designs)
+```json
+{
+  "rfc_id": "RFC-001",
+  "title": "Task Management API Design",
+  "version": "1.0.0",
+  "prd_reference": {
+    "prd_id": "prd-task-management-001",
+    "requirements_addressed": ["REQ-001", "REQ-002"]
+  },
+  "architecture": {
+    "overview_diagram": {
+      "mermaid_code": "graph TB; Client-->Gateway; Gateway-->Service; Service-->DB",
+      "description": "System architecture overview"
+    }
+  },
+  "status": "Draft"
+}
+```
+
+### `api_contracts`
+Stores API endpoint specifications
+```json
+{
+  "endpoint": "/api/v1/tasks",
+  "method": "POST",
+  "authentication": "Bearer JWT",
+  "request_schema": {
+    "title": "string (required)",
+    "description": "string",
+    "due_date": "date (ISO 8601)"
+  },
+  "response_schema": {
+    "task_id": "string",
+    "created_at": "datetime",
+    "status": "created"
+  },
+  "error_responses": [
+    {
+      "status": 401,
+      "type": "Unauthorized",
+      "description": "Missing or invalid authentication token"
+    },
+    {
+      "status": 400,
+      "type": "ValidationError",
+      "validationErrors": [{"field": "title", "message": "Title is required"}]
+    }
+  ],
+  "rate_limiting": "100 requests per minute"
+}
+```
+
+### `epics`
+Stores feature groupings (linked to PRD + RFC)
+```json
+{
+  "epic_id": "epic-task-management-001",
+  "title": "Task Creation and Management",
+  "prd_reference": {
+    "prd_id": "prd-task-management-001",
+    "requirements_addressed": ["REQ-001", "REQ-002"]
+  },
+  "rfc_reference": {
+    "rfc_id": "RFC-001",
+    "sections": ["4 - Architecture Design", "6 - API Contracts"],
+    "architecture_components": ["Task Service", "Database"]
+  },
+  "tasks_count": 8,
+  "status": "Planning"
+}
+```
+
+### `tasks`
+Stores implementable work items
+```json
+{
+  "task_id": "task-001",
+  "epic_id": "epic-task-management-001",
+  "type": "backend",
+  "title": "Implement Task Creation API Endpoint",
+  "description": "Create the POST /api/v1/tasks endpoint that accepts task creation requests with title, description, and due_date. Must validate input, create database record, and return task_id. Include error handling for validation failures. This task is part of REQ-001 (User can create tasks) from PRD and implements the API contract defined in RFC-001 section 6.",
+  "status": "Todo",
+  "prd_context": {
+    "requirement_id": "REQ-001",
+    "requirement_title": "User can create tasks",
+    "acceptance_criteria": ["Task appears in user's task list", "Due date is validated"]
+  },
+  "rfc_context": {
+    "rfc_id": "RFC-001",
+    "api_endpoint": "/api/v1/tasks",
+    "http_method": "POST",
+    "implementation_phase": "Phase 1"
+  }
+}
+```
+
+---
+
+## 🔗 Document Linking
+
+Documents are fully linked for complete traceability:
+
+```
+PRD Requirement → RFC Section → Epic → Task → Code
+  (REQ-001)    →  (4.2)     →  (epic-001) → (task-001)
+
+Each level includes context from all previous levels
+This enables:
+- Full requirements traceability
+- Understanding "why" decisions were made
+- Complete context for code generation
+- Easy impact analysis for changes
+```
+
+---
+
+## 📚 Reference Materials
+
+- **Quick Start:** Read the section above
+- **Commands Guide:** See `.claude/COMMANDS_GUIDE.md`
+- **PRD Template:** See `templates/prd.md`
+- **RFC Template:** See `templates/rfc.md` (with Mermaid examples)
+- **Schemas:** See `templates/schemas/` for validation rules
 
 ---
 
