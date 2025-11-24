@@ -209,22 +209,40 @@
     },
     "architecture": {
       "type": "object",
-      "description": "System architecture and design",
+      "description": "System architecture and design with Mermaid diagrams",
       "properties": {
-        "diagram_url": {
-          "type": "string",
-          "format": "uri",
-          "description": "Link to architecture diagram"
+        "overview_diagram": {
+          "type": "object",
+          "description": "System overview architecture diagram",
+          "properties": {
+            "diagram_url": {
+              "type": "string",
+              "format": "uri",
+              "description": "Link to external architecture diagram (PNG, SVG, etc.)"
+            },
+            "mermaid_code": {
+              "type": "string",
+              "description": "Mermaid diagram code for system architecture (graph TB/LR format showing components and their relationships)",
+              "minLength": 50
+            },
+            "description": {
+              "type": "string",
+              "description": "Description of the architecture overview"
+            }
+          }
         },
         "components": {
           "type": "array",
-          "description": "Major system components",
+          "description": "Major system components with detailed information",
+          "minItems": 1,
           "items": {
             "type": "object",
+            "required": ["name", "type"],
             "properties": {
               "name": {
                 "type": "string",
-                "description": "Component name"
+                "description": "Component name",
+                "minLength": 1
               },
               "type": {
                 "type": "string",
@@ -241,29 +259,111 @@
               },
               "technology": {
                 "type": "string",
-                "description": "Technology/platform used"
+                "description": "Technology/platform used (e.g., Node.js, PostgreSQL, Redis, RabbitMQ)"
               }
             }
           }
         },
         "integrations": {
-          "type": "array",
-          "description": "Integration points with other systems",
-          "items": {
-            "type": "object",
-            "properties": {
-              "system": {
-                "type": "string",
-                "description": "Name of the integrated system"
-              },
-              "integration_point": {
-                "type": "string",
-                "description": "How it integrates (API, event, database, etc.)"
-              },
-              "impact": {
-                "type": "string",
-                "enum": ["critical", "high", "medium", "low"],
-                "description": "Impact if this integration fails"
+          "type": "object",
+          "description": "Integration architecture with external systems",
+          "properties": {
+            "diagram": {
+              "type": "object",
+              "description": "Integration diagram",
+              "properties": {
+                "diagram_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Link to external integration diagram"
+                },
+                "mermaid_code": {
+                  "type": "string",
+                  "description": "Mermaid diagram code showing integration points (graph LR/TB format)",
+                  "minLength": 50
+                }
+              }
+            },
+            "integration_points": {
+              "type": "array",
+              "description": "Integration points with other systems",
+              "items": {
+                "type": "object",
+                "required": ["system", "integration_type"],
+                "properties": {
+                  "system": {
+                    "type": "string",
+                    "description": "Name of the integrated system"
+                  },
+                  "integration_type": {
+                    "type": "string",
+                    "enum": ["REST_API", "gRPC", "Event_Stream", "Database", "File_Transfer", "Webhook", "Other"],
+                    "description": "Type of integration"
+                  },
+                  "protocol": {
+                    "type": "string",
+                    "description": "Communication protocol (REST, gRPC, Kafka, RabbitMQ, etc.)"
+                  },
+                  "impact": {
+                    "type": "string",
+                    "enum": ["critical", "high", "medium", "low"],
+                    "description": "Impact if this integration fails"
+                  },
+                  "notes": {
+                    "type": "string",
+                    "description": "Additional integration details"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "data_flow": {
+          "type": "object",
+          "description": "Data flow through the system",
+          "properties": {
+            "diagram": {
+              "type": "object",
+              "description": "Data flow diagram",
+              "properties": {
+                "diagram_url": {
+                  "type": "string",
+                  "format": "uri",
+                  "description": "Link to external data flow diagram"
+                },
+                "mermaid_code": {
+                  "type": "string",
+                  "description": "Mermaid diagram code showing data flow (graph TB/LR format)",
+                  "minLength": 50
+                }
+              }
+            },
+            "description": {
+              "type": "string",
+              "description": "Detailed description of how data flows through the system including request processing, transformations, database operations, caching, and response generation"
+            },
+            "key_flows": {
+              "type": "array",
+              "description": "Key data flow scenarios (e.g., create user flow, authentication flow)",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "flow_name": {
+                    "type": "string",
+                    "description": "Name of the data flow scenario"
+                  },
+                  "steps": {
+                    "type": "array",
+                    "description": "Steps in the flow",
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "error_handling": {
+                    "type": "string",
+                    "description": "Error handling approach for this flow"
+                  }
+                }
               }
             }
           }

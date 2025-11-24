@@ -1,15 +1,136 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Epic Schema",
-  "description": "Comprehensive schema for Product Epics with business context, scope, team assignments, and progress tracking",
+  "description": "Comprehensive schema for Product Epics supporting both PRD-linked (Mode 1) and RFC-only (Mode 2) enhancement workflows",
   "type": "object",
-  "required": ["prd_id", "title", "description", "priority", "status", "business_context", "scope", "team", "timestamps"],
+  "required": ["epic_id", "title", "description", "priority", "status", "business_context", "scope", "team", "timestamps"],
+  "oneOf": [
+    {
+      "required": ["prd_reference"],
+      "not": {
+        "required": ["rfc_reference", "enhancement_context"]
+      }
+    },
+    {
+      "required": ["rfc_reference", "enhancement_context"],
+      "not": {
+        "required": ["prd_reference"]
+      }
+    }
+  ],
   "properties": {
-    "prd_id": {
+    "epic_id": {
       "type": "string",
-      "description": "Reference to the parent PRD document",
-      "minLength": 1,
-      "maxLength": 100
+      "pattern": "^epic-[a-z0-9-]+$",
+      "description": "Unique epic identifier (e.g., epic-001, epic-user-auth, epic-RFC-RFC-001-1 for RFC-only enhancements)"
+    },
+    "prd_reference": {
+      "type": "object",
+      "description": "Reference to parent PRD (Mode 1: PRD-linked epics). Mutually exclusive with rfc_reference.",
+      "required": ["prd_id", "requirements_addressed"],
+      "properties": {
+        "prd_id": {
+          "type": "string",
+          "pattern": "^prd-[a-z0-9-]+$",
+          "description": "Reference to the parent PRD document"
+        },
+        "requirements_addressed": {
+          "type": "array",
+          "description": "PRD requirements (REQ-###) that this epic addresses",
+          "items": {
+            "type": "string",
+            "pattern": "^REQ-\\d+$"
+          },
+          "minItems": 1
+        }
+      }
+    },
+    "rfc_reference": {
+      "type": "object",
+      "description": "Reference to parent RFC (Mode 2: RFC-only enhancement epics). Mutually exclusive with prd_reference.",
+      "required": ["rfc_id"],
+      "properties": {
+        "rfc_id": {
+          "type": "string",
+          "pattern": "^RFC-\\d+$",
+          "description": "Reference to the parent RFC document"
+        },
+        "sections": {
+          "type": "array",
+          "description": "RFC sections (e.g., '4.2', '5.1') that this epic implements",
+          "items": {
+            "type": "string",
+            "pattern": "^\\d+(\\.\\d+)*$"
+          }
+        },
+        "architecture_components": {
+          "type": "array",
+          "description": "Architecture components from RFC that this epic covers",
+          "items": {
+            "type": "string"
+          }
+        },
+        "implementation_phase": {
+          "type": "string",
+          "description": "RFC implementation phase (e.g., 'Phase 1: Foundation', 'Phase 2: Core Features')"
+        },
+        "enhancement_type": {
+          "type": "string",
+          "enum": ["feature_enhancement", "refactoring", "optimization", "bugfix", "technical_debt"],
+          "description": "Type of enhancement from RFC"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["partial", "complete", "comprehensive"],
+          "description": "Scope of the RFC enhancement (partial=subset, complete=feature/subsystem, comprehensive=cross-cutting)"
+        },
+        "backward_compatible": {
+          "type": "boolean",
+          "description": "Whether this enhancement maintains backward compatibility"
+        }
+      }
+    },
+    "enhancement_context": {
+      "type": "object",
+      "description": "Enhancement context details (Mode 2 only: RFC-only enhancements without PRD)",
+      "required": ["type", "reason"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["feature_enhancement", "refactoring", "optimization", "bugfix", "technical_debt"],
+          "description": "Type of enhancement"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 30,
+          "description": "Business or technical justification for this enhancement (minimum 30 words)"
+        },
+        "current_state": {
+          "type": "string",
+          "description": "Description of what currently exists and what will be improved"
+        },
+        "desired_state": {
+          "type": "string",
+          "description": "Description of the desired state after enhancement"
+        },
+        "scope": {
+          "type": "string",
+          "enum": ["partial", "complete", "comprehensive"],
+          "description": "Scope of enhancement impact"
+        },
+        "impact_analysis": {
+          "type": "string",
+          "description": "What existing functionality is impacted or changed"
+        },
+        "backward_compatibility": {
+          "type": "string",
+          "description": "Backward compatibility assessment (yes/no/partial with migration path)"
+        },
+        "migration_path": {
+          "type": "string",
+          "description": "Path for users/systems to migrate if breaking changes introduced"
+        }
+      }
     },
     "title": {
       "type": "string",
@@ -78,7 +199,15 @@
       "properties": {
         "related_prd_sections": {
           "type": "array",
-          "description": "Section numbers from parent PRD (e.g., '6.1', '6.2')",
+          "description": "Section numbers from parent PRD (e.g., '6.1', '6.2') - used for Mode 1 PRD-linked epics",
+          "items": {
+            "type": "string",
+            "pattern": "^\\d+(\\.\\d+)*$"
+          }
+        },
+        "related_rfc_sections": {
+          "type": "array",
+          "description": "RFC section references (e.g., '4.2', '5.1') - used for Mode 2 RFC-only epics",
           "items": {
             "type": "string",
             "pattern": "^\\d+(\\.\\d+)*$"
